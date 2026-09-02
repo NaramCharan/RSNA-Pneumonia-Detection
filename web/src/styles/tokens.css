@@ -1,0 +1,114 @@
+/* web/src/styles/tokens.css
+ *
+ * Radiology reading room: dark, low-glare, film-grey.
+ * Colour is reserved for the verdict — red = positive finding,
+ * blue = clear study (and the primary CTA). Nothing else is red or blue.
+ *
+ * Contrast ratios for every pair actually used are documented in
+ * Do not darken a text token without re-checking its contrast ratio.
+ */
+
+:root {
+  /* ── Surfaces ────────────────────────────────────────────────────── */
+  --bg:          #0a0c0e;   /* page */
+  --panel:       #101418;   /* raised surface, row hover */
+  --panel-2:     #151a1f;   /* inset surface: active tab, selected row, bar track */
+
+  /* ── Rules & borders ─────────────────────────────────────────────── */
+  --line:        #1f262d;   /* decorative rules between panels/sections */
+  --line-soft:   #171d23;   /* internal hairlines (panel head/foot) */
+  --line-strong: #5e6870;   /* CONTROL boundaries: buttons, tabs, selected row,
+                               drag outline. 3.44:1 on --bg — meets WCAG 1.4.11 */
+
+  /* ── Text ────────────────────────────────────────────────────────── */
+  --fg:          #dfe5ea;   /* primary text, headings, verdict-neutral copy */
+  --fg-dim:      #8b959e;   /* secondary text, panel titles, probability readout */
+  --fg-faint:    #7d8791;   /* tertiary mono: hints, sizes, indices, disclaimer
+                               RAISED from prototype #5a636b — see §1.4 */
+
+  /* ── Verdict (the only red/blue in the product) ──────────────────── */
+  --red:         #ff4d5e;   /* POSITIVE FINDING */
+  --red-dim:     #4a1c24;   /* inner ring on a positive preview border */
+  --blue:        #4da3ff;   /* NO FINDING, and the primary CTA */
+  --blue-dim:    #1e3a52;   /* inner ring on a negative preview border */
+  --on-blue:     #06121f;   /* text on a --blue filled button. 7.18:1 */
+
+  /* ── Non-verdict signal (never red, never blue) ──────────────────── */
+  --ok:          #3fb950;   /* backend online. 6.55:1 on --bg.
+                               Green sits outside the verdict palette, so it
+                               reads as "system healthy" without competing
+                               with red/blue, which mean what the MODEL said. */
+  --warn:        #d9a441;   /* backend offline, errors, ignored files. 8.71:1 */
+  --warn-dim:    #3a2c12;   /* error strip background */
+
+  /* ── Focus ───────────────────────────────────────────────────────── */
+  --focus:       #dfe5ea;   /* neutral ring, always drawn with outline-offset
+                               so it sits on the page bg, never on --blue */
+
+  /* ── Spacing scale (4px base) ────────────────────────────────────── */
+  --sp-0:  0;
+  --sp-1:  2px;
+  --sp-2:  4px;
+  --sp-3:  8px;
+  --sp-4:  12px;
+  --sp-5:  16px;
+  --sp-6:  20px;
+  --sp-7:  24px;
+  --sp-8:  32px;
+  --sp-9:  48px;
+
+  /* ── Radii ───────────────────────────────────────────────────────── */
+  --r-sm:   2px;   /* preview image, bar track, inline <code> */
+  --r-md:   4px;   /* buttons, tabs, rows — the house radius */
+  --r-full: 999px; /* status dot */
+
+  /* ── Border widths ───────────────────────────────────────────────── */
+  --bw:      1px;
+  --bw-2:    2px;  /* selected-row marker, focus ring */
+
+  /* ── Font stacks ─────────────────────────────────────────────────── */
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+
+  /* ── Type scale ──────────────────────────────────────────────────── */
+  --fs-xs:   11px;  /* mono meta, hints, empty states, tabs, status, disclaimer */
+  --fs-sm:   12px;  /* buttons, probability readout, verdict badge */
+  --fs-md:   13px;  /* file names */
+  --fs-base: 14px;  /* root */
+  --fs-lg:   15px;  /* header h1 */
+  --fs-xl:   22px;  /* verdict */
+
+  --lh-tight: 1.2;
+  --lh-base:  1.45;
+
+  --ls-caps:  0.09em;  /* uppercase mono labels */
+  --ls-tight: -0.01em; /* the verdict only */
+
+  --fw-regular: 400;
+  --fw-medium:  500;
+  --fw-semi:    600;
+
+  /* ── Motion ──────────────────────────────────────────────────────── */
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 500ms;   /* confidence bar fill */
+  --ease: cubic-bezier(0.2, 0, 0.2, 1);
+
+  /* ── Elevation (the ONLY shadows in the app) ─────────────────────── */
+  --glow-pos: 0 0 0 1px var(--red-dim),  0 0 30px -12px var(--red);
+  --glow-neg: 0 0 0 1px var(--blue-dim), 0 0 30px -12px var(--blue);
+
+  /* ── Layout ──────────────────────────────────────────────────────── */
+  --panel-min: 280px;   /* StudyPanel min column width, desktop */
+  --panel-max: 360px;   /* StudyPanel max column width, desktop */
+  --bp-stack:  820px;   /* documentation only — media queries need literals */
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+  }
+}

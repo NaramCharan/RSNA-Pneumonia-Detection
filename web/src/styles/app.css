@@ -1,0 +1,649 @@
+/* web/src/styles/app.css
+ *
+ * Reset + every component rule, in component order.
+ * There are no other stylesheets: no CSS-in-JS, no CSS Modules, no per-component
+ * files. Every colour / size / duration below references a token from tokens.css.
+ * The single permitted raw literal is the viewport vignette (§2.7).
+ */
+
+/* ── Reset & page shell (spec §2.1, §4.1) ──────────────────────────── */
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--sans);
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+/* One focus treatment for the whole app. The offset puts the ring on the page
+ * background (15.43:1) so it is never drawn against the blue CTA fill. */
+:focus-visible {
+  outline: var(--bw-2) solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Screen-reader-only text. Must stay in the accessibility tree, so this is the
+ * clip pattern rather than display:none (spec §6). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ── Layout grid (spec §4.2) ───────────────────────────────────────── */
+
+.layout {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(var(--panel-min), var(--panel-max)) 1fr;
+  gap: var(--bw);
+  background: var(--line); /* the 1px gap IS the rule between the panels */
+}
+
+.panel {
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  min-width: 0; /* required, or long filenames blow out the column */
+  min-height: 0;
+}
+
+.panel-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  padding: var(--sp-4) var(--sp-6);
+  border-bottom: var(--bw) solid var(--line-soft);
+}
+
+.panel-title {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  font-weight: var(--fw-semi);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  color: var(--fg-dim);
+}
+
+.panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--sp-3);
+}
+
+.panel-foot {
+  flex: none;
+  padding: var(--sp-4) var(--sp-6);
+  border-top: var(--bw) solid var(--line-soft);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sp-3) var(--sp-4);
+}
+
+/* ── Buttons (spec §2.4) ───────────────────────────────────────────── */
+
+.btn {
+  font-family: var(--sans);
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-medium);
+  padding: var(--sp-3) var(--sp-5);
+  border-radius: var(--r-md);
+  border: var(--bw) solid var(--line-strong);
+  background: var(--panel-2);
+  color: var(--fg);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    background var(--dur-fast) var(--ease);
+}
+
+.btn:hover:not(:disabled) {
+  border-color: var(--fg-dim);
+  background: var(--panel);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn--primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: var(--on-blue);
+  font-weight: var(--fw-semi);
+}
+
+.btn--primary:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.btn--primary:disabled {
+  filter: none; /* opacity alone; never grey the blue */
+}
+
+/* ── Header / StatusDot (spec §2.2) ────────────────────────────────── */
+
+.header {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-5) var(--sp-7);
+  border-bottom: var(--bw) solid var(--line);
+}
+
+/* Crosshair mark: a CSS-only circle with a vertical spine and a horizontal
+ * rib. No icon library (spec §2.2). Decorative, so aria-hidden in the markup. */
+/* Lungs mark. Sized here, drawn in Header.tsx; `currentColor` means the
+   stroke follows this rule's color. */
+.mark {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  color: var(--fg-dim);
+}
+
+.header__titles {
+  min-width: 0;
+}
+
+.header__title {
+  margin: 0;
+  font-family: var(--sans);
+  font-size: var(--fs-lg);
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.01em;
+  color: var(--fg);
+  line-height: var(--lh-tight);
+}
+
+.header__subtitle {
+  margin: var(--sp-1) 0 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  line-height: var(--lh-tight);
+}
+
+.status {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+}
+
+/* The dot is never the only cue — a text string always sits beside it. */
+.status__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--r-full);
+  flex: none;
+  background: var(--fg-dim);
+}
+
+.status__dot--checking {
+  background: var(--fg-faint);
+  opacity: 0.5;
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.status__dot--online {
+  /* Green, not blue: blue means "the model found nothing". A glow keeps the
+     6px dot legible at this size without enlarging it. */
+  background: var(--ok);
+  box-shadow: 0 0 6px -1px var(--ok);
+}
+
+.status__dot--offline {
+  background: var(--warn);
+}
+
+.status__text {
+  color: var(--fg-dim);
+}
+
+.status__text--checking {
+  color: var(--fg-faint);
+}
+
+.status__text--online {
+  color: var(--ok);
+}
+
+.status__text--offline {
+  color: var(--warn);
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .status__dot--checking {
+    animation: none;
+  }
+}
+
+/* ── StudyPanel (spec §2.4) ────────────────────────────────────────── */
+
+/* While a prediction runs the whole study panel is frozen (spec §3.4).
+ * The tabs and Browse button also carry a real `disabled` attribute so the
+ * state reaches keyboard and screen-reader users, not just the mouse. */
+.panel.is-busy {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+/* ── FileList / FileRow (spec §2.5) ────────────────────────────────── */
+
+.filelist {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.filelist.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.file {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  padding: var(--sp-3) var(--sp-4);
+  border-radius: var(--r-md);
+  border: var(--bw) solid transparent;
+  cursor: pointer;
+  user-select: none;
+}
+
+.file:hover {
+  background: var(--panel);
+}
+
+.file.is-selected {
+  background: var(--panel-2);
+  border-color: var(--line-strong);
+}
+
+/* The non-colour selection cue. Neutral --fg, NOT --blue. */
+.file.is-selected::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: var(--bw-2);
+  background: var(--fg);
+  border-radius: var(--r-full);
+}
+
+.file__idx {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  width: 22px;
+  flex: none;
+}
+
+.file.is-selected .file__idx {
+  color: var(--fg);
+  font-weight: var(--fw-semi);
+}
+
+.file__name {
+  font-size: var(--fs-md);
+  color: var(--fg);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file.is-selected .file__name {
+  font-weight: var(--fw-semi);
+}
+
+.empty {
+  margin: 0;
+  padding: var(--sp-8) var(--sp-4);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+}
+
+/* ── AnalysisPanel (spec §2.6) ─────────────────────────────────────── */
+
+.meta {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  max-width: 60%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.statusline {
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  min-width: 0;
+}
+
+/* Amber, never red — red is the pneumonia verdict. */
+.statusline--warn {
+  color: var(--warn);
+  border-left: var(--bw-2) solid var(--warn);
+  padding-left: var(--sp-3);
+  white-space: normal;
+}
+
+/* ── Viewport (spec §2.7) ──────────────────────────────────────────── */
+
+.viewport {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-7);
+  position: relative;
+  overflow: hidden;
+  /* The one permitted raw literal: a lightbox vignette, not a semantic colour. */
+  background: radial-gradient(ellipse at center, #0e1216 0%, var(--bg) 70%);
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.placeholder.is-dimmed {
+  opacity: 0.4;
+}
+
+/* 54x66 "film" rectangle with a centred 1px spine. Decorative. */
+.ph-mark {
+  width: 54px;
+  height: 66px;
+  border: var(--bw) solid var(--line);
+  border-radius: var(--r-sm);
+  background: linear-gradient(var(--line-soft), var(--line-soft)) center / 1px 60%
+    no-repeat;
+}
+
+.ph-text {
+  margin: 14px 0 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+}
+
+/* An image still loading is hidden rather than shown as a blank frame —
+   the placeholder stands in until onLoad fires. */
+.preview.is-hidden {
+  display: none;
+}
+
+.preview {
+  display: block;
+  max-width: 100%;
+  max-height: 58vh;
+  width: auto;
+  height: auto;
+  border: var(--bw) solid var(--line);
+  border-radius: var(--r-sm);
+}
+
+.preview--pos {
+  border-color: var(--red);
+  box-shadow: var(--glow-pos);
+}
+
+.preview--neg {
+  border-color: var(--blue);
+  box-shadow: var(--glow-neg);
+}
+
+/* Neutral sweep — a blue sweep would read as a provisional "clear" verdict. */
+.scanline {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--fg-dim), transparent);
+  opacity: 0.7;
+  animation: sweep 1.4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes sweep {
+  0%,
+  100% {
+    top: 12%;
+  }
+  50% {
+    top: 88%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scanline {
+    animation: none;
+    top: 50%;
+    opacity: 0.35;
+  }
+}
+
+/* ── ResultCard / ConfidenceBar (spec §2.8) ────────────────────────── */
+
+.result {
+  flex: none;
+  padding: var(--sp-6);
+  border-top: var(--bw) solid var(--line-soft);
+}
+
+.result__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  flex-wrap: wrap;
+}
+
+.result__verdict {
+  font-family: var(--sans);
+  font-size: var(--fs-xl);
+  font-weight: var(--fw-semi);
+  letter-spacing: var(--ls-tight);
+  line-height: var(--lh-tight);
+}
+
+/* The colour-independent restatement of the verdict. */
+.result__badge {
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  text-transform: uppercase;
+  letter-spacing: var(--ls-caps);
+  padding: var(--sp-1) var(--sp-3);
+  border: var(--bw) solid currentColor;
+  border-radius: var(--r-md);
+  margin-left: var(--sp-3);
+  vertical-align: 3px;
+}
+
+.result__prob {
+  font-family: var(--mono);
+  font-size: var(--fs-sm);
+  color: var(--fg-dim); /* neutral — the number is not the verdict */
+}
+
+.result--pos .result__verdict,
+.result--pos .result__badge {
+  color: var(--red);
+}
+
+.result--neg .result__verdict,
+.result--neg .result__badge {
+  color: var(--blue);
+}
+
+.result__disclaimer {
+  margin: var(--sp-4) 0 0;
+  font-family: var(--mono);
+  font-size: var(--fs-xs);
+  color: var(--fg-faint);
+  letter-spacing: 0.02em;
+}
+
+.bar {
+  height: 3px;
+  margin-top: var(--sp-4);
+  background: var(--panel-2);
+  border-radius: var(--r-sm);
+  overflow: hidden;
+}
+
+.bar__fill {
+  height: 100%;
+  width: 0;
+  border-radius: var(--r-sm);
+  transition: width var(--dur-slow) var(--ease);
+}
+
+.result--pos .bar__fill,
+.bar__fill--pos {
+  background: var(--red);
+}
+
+.result--neg .bar__fill,
+.bar__fill--neg {
+  background: var(--blue);
+}
+
+/* ── Breakpoints (spec §4.3) ───────────────────────────────────────── */
+
+@media (max-width: 1099px) {
+  .layout {
+    grid-template-columns: minmax(240px, 300px) 1fr;
+  }
+
+  .panel-head,
+  .panel-foot {
+    padding-left: var(--sp-5);
+    padding-right: var(--sp-5);
+  }
+}
+
+@media (max-width: 820px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .study-panel .panel-body {
+    max-height: 40vh; /* the list must not push the viewport off-screen */
+  }
+
+  .viewport {
+    min-height: 46vh;
+    padding: var(--sp-5);
+  }
+
+  .preview {
+    max-height: 42vh;
+  }
+
+  .header {
+    padding: var(--sp-4) var(--sp-5);
+  }
+
+  .file {
+    padding: var(--sp-4); /* 43px touch target */
+  }
+}
+
+@media (max-width: 480px) {
+  .panel-head,
+  .panel-foot {
+    padding: var(--sp-4);
+  }
+
+  .panel-body {
+    padding: var(--sp-2);
+  }
+
+  .panel-foot .btn {
+    width: 100%;
+  }
+
+  
+
+  .result {
+    padding: var(--sp-5);
+  }
+
+  .result__head {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sp-2);
+  }
+
+  .header__subtitle {
+    display: none; /* first thing to go */
+  }
+
+  .analysis-panel .meta {
+    max-width: 100%;
+  }
+}
