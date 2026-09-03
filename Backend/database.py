@@ -1,10 +1,17 @@
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 from sqlalchemy import create_engine, Integer, Column, VARCHAR
+import os
+from dotenv import load_dotenv, find_dotenv
+
+path = find_dotenv()
+load_dotenv(path)
+
+database_url = os.getenv('database_url')
 
 
 #For docker replace the localhost with --> host.docker.internal
 
-url = 'postgresql://shadow:reachgoal@host.docker.internal:5432/RSNAproject'
+url = database_url
 engine = create_engine(url=url)
 session = sessionmaker(bind=engine)
 
