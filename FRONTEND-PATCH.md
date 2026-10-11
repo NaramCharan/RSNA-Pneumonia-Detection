@@ -23,3 +23,5 @@ On this host the static layer was assembled with the OCI registry protocol becau
 Validation: Node regression tests, source-only lint, TypeScript/Vite build, full frontend npm audit, and Chromium against the real API. The browser selected `Case_1`, requested `/image/1`, and decoded the returned radiograph. No user upload was used. An upstream `source-map-js` development dependency was updated to remove its audit alert. Lint now targets source/config/tests explicitly because this repository tracks a subset of `node_modules`.
 
 The existing scale-to-zero setting can cause a cold start. This patch fixes study identity and image selection; it does not certify the model clinically.
+
+Deployed image: `rsnaproject.azurecr.io/rsna_docker_image_azure:v5-study-ids-20261012`, manifest `sha256:82ece5d823544cc4f02d6a5905485320372475bf161cd2ebd4749c09088c7e1a`, revision `rsna-app--0000008`. Live Chromium verification selected both `Case_1` and `Case_42`, confirmed successful decoding through `/image/1` and `/image/42`, and found no page errors. Roll back using the prior `v5` image if needed.
