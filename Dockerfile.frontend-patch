@@ -1,0 +1,3 @@
+# Reuse the exact currently deployed Linux/amd64 runtime and model image.
+FROM rsnaproject.azurecr.io/rsna_docker_image_azure@sha256:1d0016eec22e56d578e70b4ecbc5d967b053a50b592767280330e378172d22ee
+COPY web/dist/ /app/web/dist/

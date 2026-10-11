@@ -209,12 +209,15 @@ export async function fetchSamples(signal?: AbortSignal): Promise<SampleItem[]> 
       ? body.samples
       : [];
 
-  return rows.map((row, i): SampleItem => {
+  return rows.map((row): SampleItem => {
     const item = isRecord(row) ? row : {};
 
     // `id` is the only field the frontend needs: it is what gets sent back to
     // POST /predict/sample/{id}, and the list label is derived from it.
-    const id = asString(item.id) ?? String(i);
+    const id = asStudyId(item.id);
+    if (id === undefined) {
+      throw new Error("Could not load samples — a study has an invalid id.");
+    }
 
     // Carried for completeness; never displayed. Accepts the usual spellings
     // so the backend's column name does not have to match.
@@ -369,6 +372,13 @@ export function normalisePrediction(raw: Record<string, unknown>): Prediction {
 }
 
 /* ── tiny unknown-narrowing helpers ─────────────────────────────────── */
+
+/** Preserve the API's database ID; a list position is never a study ID. */
+function asStudyId(value: unknown): string | undefined {
+  if (typeof value === "string" && value.trim() !== "") return value;
+  if (typeof value === "number" && Number.isSafeInteger(value)) return String(value);
+  return undefined;
+}
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
